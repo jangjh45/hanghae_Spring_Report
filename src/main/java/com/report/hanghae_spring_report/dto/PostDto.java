@@ -10,5 +10,4 @@ public class PostDto {
     private String password;
     private String title;
     private String contents;
-    
 }

@@ -31,12 +31,12 @@ public class PostController {
     }
 
     @PutMapping("/api/posts/{id}")
-    public Long updatePost(@PathVariable Long id, @RequestBody PostDto postDto) {
+    public PostDto updatePost(@PathVariable Long id, @RequestBody PostDto postDto) {
         return postService.updatePost(id, postDto);
     }
 
     @DeleteMapping("/api/posts/{id}")
-    public Long deletePost(@PathVariable Long id) {
-        return postService.deletePost(id);
+    public String deletePost(@PathVariable Long id, @RequestBody PostDto postDto) {
+        return postService.deletePost(id, postDto);
     }
 }

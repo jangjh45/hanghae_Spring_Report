@@ -34,4 +34,23 @@ public class PostService {
         Optional<Post> postOptional = postRepository.findById(id);
         return postOptional.orElseThrow(() -> new NoSuchElementException("Post not found"));
     }
+
+    @Transactional
+    public Long updatePost(Long id, PostDto postDto) {
+        System.out.println(postDto);
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
+        if (post.getPassword().equals(postDto.getPassword())) {
+            System.out.println("비밀번호가 일치합니다.");
+            post.update(postDto);
+        }
+        return post.getId();
+    }
+
+    @Transactional
+    public Long deletePost(Long id) {
+        postRepository.deleteById(id);
+        return id;
+    }
 }

@@ -1,15 +1,15 @@
 package com.report.hanghae_spring_report.service;
 
-import com.report.hanghae_spring_report.dto.PostDto;
+import com.report.hanghae_spring_report.dto.PostRequestDto;
+import com.report.hanghae_spring_report.dto.PostResponseDto;
 import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor // 생성자 만들어줌 다음 강의에서 가르쳐준다고함...
@@ -18,43 +18,53 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Transactional
-    public Post createPost(PostDto postDto) {
-        Post post = new Post(postDto);
-        postRepository.save(post);
-        return post;
+    public PostResponseDto createPost(PostRequestDto postRequestDto) {
+        Post post = new Post(postRequestDto);
+        // 데이터 베이스에 post 값을 저장하고 반
+        return new PostResponseDto(postRepository.save(post));
     }
 
     @Transactional(readOnly = true)
-    public List<Post> getPostList() {
-        return postRepository.findAllByOrderByModifiedAtDesc();
-    }
-
-    @Transactional(readOnly = true)
-    public Post getPost(Long id) {
-        Optional<Post> postOptional = postRepository.findById(id);
-        return postOptional.orElseThrow(() -> new NoSuchElementException("Post not found"));
-    }
-
-    @Transactional
-    public PostDto updatePost(Long id, PostDto postDto) {
-        System.out.println(postDto);
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다."));
-        if (post.getPassword().equals(postDto.getPassword())) {
-            System.out.println("비밀번호가 일치합니다.");
-            post.update(postDto);
+    public List<PostResponseDto> getPostList() {
+        // PostResponseDto 객체만 들어올 수 있는 리스트 생성
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        // 데이터 베이스에서 찾은 모든값을 리스트로 저장
+        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+        for (Post post : postList) { // 리스트에서 하나씩 꺼내서 postResponseDtoList 리스트에 저장
+            postResponseDtoList.add(new PostResponseDto(post));
         }
-        return postDto;
+        return postResponseDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public PostResponseDto getPost(Long id) {
+        Post post = checkPost(id);
+        return new PostResponseDto(post);
     }
 
     @Transactional
-    public String deletePost(Long id, PostDto postDto) {
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다."));
-        if (post.getPassword().equals(postDto.getPassword())){
+    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto) {
+        Post post = checkPost(id);
+        if (post.getPassword().equals(postRequestDto.getPassword())) {
+            System.out.println("비밀번호가 일치합니다.");
+            post.update(postRequestDto);
+        }
+        return new PostResponseDto(post);
+    }
+
+    @Transactional
+    public String deletePost(Long id, PostRequestDto postRequestDto) {
+        Post post = checkPost(id);
+        if (post.getPassword().equals(postRequestDto.getPassword())){
             postRepository.deleteById(id);
             return "삭제성공";
         }
         return "삭제실패";
+    }
+
+    private Post checkPost(Long id) {
+        return postRepository.findById(id).orElseThrow(
+                () -> new NullPointerException("일치하는 게시글 없음")
+        );
     }
 }

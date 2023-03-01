@@ -1,7 +1,7 @@
 package com.report.hanghae_spring_report.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.report.hanghae_spring_report.dto.PostDto;
+import com.report.hanghae_spring_report.dto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,17 +29,17 @@ public class Post extends Timestamped{
     private String contents;
 
 
-    public Post(PostDto postDto) {
-        this.username = postDto.getUsername();
-        this.password = postDto.getPassword();
-        this.title = postDto.getTitle();
-        this.contents = postDto.getContents();
+    public Post(PostRequestDto postRequestDto) {
+        this.username = postRequestDto.getUsername();
+        this.password = postRequestDto.getPassword();
+        this.title = postRequestDto.getTitle();
+        this.contents = postRequestDto.getContents();
     }
 
-    public void update(PostDto postDto) {
-        this.username = postDto.getUsername();
-        this.password = postDto.getPassword();
-        this.title = postDto.getTitle();
-        this.contents = postDto.getContents();
+    public void update(PostRequestDto postRequestDto) {
+        this.username = postRequestDto.getUsername();
+        this.password = postRequestDto.getPassword();
+        this.title = postRequestDto.getTitle();
+        this.contents = postRequestDto.getContents();
     }
 }

@@ -5,12 +5,14 @@ import com.report.hanghae_spring_report.dto.PostResponseDto;
 import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor // 생성자 만들어줌 다음 강의에서 가르쳐준다고함...
 public class PostService {
@@ -20,7 +22,7 @@ public class PostService {
     @Transactional
     public PostResponseDto createPost(PostRequestDto postRequestDto) {
         Post post = new Post(postRequestDto);
-        // 데이터 베이스에 post 값을 저장하고 반
+        // 데이터 베이스에 post 값을 저장하고 반환
         return new PostResponseDto(postRepository.save(post));
     }
 
@@ -32,6 +34,7 @@ public class PostService {
         List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
         for (Post post : postList) { // 리스트에서 하나씩 꺼내서 postResponseDtoList 리스트에 저장
             postResponseDtoList.add(new PostResponseDto(post));
+            log.info("post = {}",post);
         }
         return postResponseDtoList;
     }
@@ -46,7 +49,6 @@ public class PostService {
     public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto) {
         Post post = checkPost(id);
         if (post.getPassword().equals(postRequestDto.getPassword())) {
-            System.out.println("비밀번호가 일치합니다.");
             post.update(postRequestDto);
         }
         return new PostResponseDto(post);

@@ -20,7 +20,6 @@ public class PostController {
     @PostMapping("/create") // 게시글 저장 name content password
     public PostResponseDto createPost(@RequestBody PostRequestDto postRequestDto) {
         log.info("postDto = {}", postRequestDto);
-//        System.out.println(postDto.toString());
         return postService.createPost(postRequestDto);
     }
 

@@ -2,16 +2,16 @@ package com.report.hanghae_spring_report.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
 public class UserResponseDto {
 
-    private HttpStatus status;
+    private String messege;
+    private int errorNum;
 
-    public UserResponseDto(HttpStatus ok) {
-        this.status = ok;
-
+    public UserResponseDto(String success, int i) {
+        this.messege = success;
+        this.errorNum = i;
     }
 }

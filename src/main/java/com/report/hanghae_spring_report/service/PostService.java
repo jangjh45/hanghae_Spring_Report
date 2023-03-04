@@ -48,20 +48,15 @@ public class PostService {
     @Transactional
     public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto) {
         Post post = checkPost(id);
-        if (post.getPassword().equals(postRequestDto.getPassword())) {
-            post.update(postRequestDto);
-        }
+        post.update(postRequestDto);
         return new PostResponseDto(post);
     }
 
     @Transactional
     public String deletePost(Long id, PostRequestDto postRequestDto) {
         Post post = checkPost(id);
-        if (post.getPassword().equals(postRequestDto.getPassword())){
-            postRepository.deleteById(id);
-            return "삭제성공";
-        }
-        return "삭제실패";
+        postRepository.deleteById(id);
+        return "";
     }
 
     private Post checkPost(Long id) {

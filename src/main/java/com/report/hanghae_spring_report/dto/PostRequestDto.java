@@ -7,7 +7,6 @@ import lombok.ToString;
 @ToString
 public class PostRequestDto {
     private String username;
-    private String password;
     private String title;
     private String contents;
 }

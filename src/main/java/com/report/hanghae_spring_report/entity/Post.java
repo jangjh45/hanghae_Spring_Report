@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Getter
-@Entity
+@Entity // DB 테이블과 매핑 대상
 @NoArgsConstructor
 public class Post extends Timestamped{
     @Id
@@ -19,10 +19,6 @@ public class Post extends Timestamped{
     private String username;
 
     @Column(nullable = false)
-    @JsonIgnore
-    private String password;
-
-    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
@@ -31,14 +27,12 @@ public class Post extends Timestamped{
 
     public Post(PostRequestDto postRequestDto) {
         this.username = postRequestDto.getUsername();
-        this.password = postRequestDto.getPassword();
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
     }
 
     public void update(PostRequestDto postRequestDto) {
         this.username = postRequestDto.getUsername();
-        this.password = postRequestDto.getPassword();
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
     }

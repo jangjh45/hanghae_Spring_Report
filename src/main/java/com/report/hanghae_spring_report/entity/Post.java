@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Post extends Timestamped{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -25,14 +25,13 @@ public class Post extends Timestamped{
     private String contents;
 
 
-    public Post(PostRequestDto postRequestDto) {
-        this.username = postRequestDto.getUsername();
+    public Post(PostRequestDto postRequestDto, String subject) {
+        this.username = subject;
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
     }
 
     public void update(PostRequestDto postRequestDto) {
-        this.username = postRequestDto.getUsername();
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
     }

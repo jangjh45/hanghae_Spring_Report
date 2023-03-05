@@ -1,8 +1,9 @@
 package com.report.hanghae_spring_report.service;
 
 import com.report.hanghae_spring_report.dto.LoginRequestDto;
+import com.report.hanghae_spring_report.dto.MessageResponse;
 import com.report.hanghae_spring_report.dto.SignupRequestDto;
-import com.report.hanghae_spring_report.dto.UserResponseDto;
+import com.report.hanghae_spring_report.dto.StatusEnum;
 import com.report.hanghae_spring_report.entity.User;
 import com.report.hanghae_spring_report.entity.UserEnum;
 import com.report.hanghae_spring_report.jwt.JwtUtil;
@@ -22,7 +23,8 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private static final String ADMIN_TOKEN = "wkdwlsgurwkdwlsgur";
 
-    public UserResponseDto signup(SignupRequestDto signupRequestDto) {
+    @Transactional
+    public MessageResponse signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
 
@@ -41,11 +43,11 @@ public class UserService {
         }
         User user = new User(username, password, role);
         userRepository.save(user);
-        return new UserResponseDto("success", 200);
+        return new MessageResponse(StatusEnum.OK);
     }
 
     @Transactional(readOnly = true)
-    public UserResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public MessageResponse login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
@@ -58,6 +60,6 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
-        return new UserResponseDto("success", 200);
+        return new MessageResponse(StatusEnum.OK);
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +49,8 @@ public class PostService {
             Post post = postRepository.saveAndFlush(new Post(postRequestDto, claims.getSubject()));
             return new PostResponseDto(post);
         } else {
-            return null;
+            throw new IllegalArgumentException("로그인 안함(토큰 없음)");
+
         }
     }
 
@@ -59,7 +59,7 @@ public class PostService {
         // PostResponseDto 객체만 들어올 수 있는 리스트 생성
         List<PostListResponseDto> postResponseDtoList = new ArrayList<>();
         // 데이터 베이스에서 찾은 모든값을 리스트로 저장
-        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+        List<Post> postList = postRepository.findAllByOrderByIdDesc();
         for (Post post : postList) { // 리스트에서 하나씩 꺼내서 postResponseDtoList 리스트에 저장
             postResponseDtoList.add(new PostListResponseDto(post));
             log.info("post = {}", post);
@@ -92,14 +92,16 @@ public class PostService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
+
             // 게시글에 일치하는 게시글 아이디와 작성자 이름이 있는지 확인
-            Post post = postRepository.findByIdAndUsername(user.getId(), claims.getSubject()).orElseThrow(
+            Post post = postRepository.findByIdAndUsername(id, claims.getSubject()).orElseThrow(
                     () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
             );
+
             post.update(postRequestDto);
             return new PostResponseDto(post);
         } else {
-            return null;
+            throw new IllegalArgumentException("로그인 안함(토큰 없음)");
         }
     }
 
@@ -122,13 +124,15 @@ public class PostService {
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
-            Post post = postRepository.findByIdAndUsername(user.getId(), claims.getSubject()).orElseThrow(
+
+            Post post = postRepository.findByIdAndUsername(id, claims.getSubject()).orElseThrow(
                     () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
             );
+
             postRepository.deleteById(id);
             return new MessageResponse(StatusEnum.OK);
         } else {
-            return null;
+            throw new IllegalArgumentException("로그인 안함(토큰 없음)");
         }
     }
 

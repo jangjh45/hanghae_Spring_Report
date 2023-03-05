@@ -1,26 +1,22 @@
 package com.report.hanghae_spring_report.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.report.hanghae_spring_report.dto.PostDto;
+import com.report.hanghae_spring_report.dto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Getter
-@Entity
+@Entity // DB 테이블과 매핑 대상
 @NoArgsConstructor
 public class Post extends Timestamped{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String username;
-
-    @Column(nullable = false)
-    @JsonIgnore
-    private String password;
 
     @Column(nullable = false)
     private String title;
@@ -29,17 +25,14 @@ public class Post extends Timestamped{
     private String contents;
 
 
-    public Post(PostDto postDto) {
-        this.username = postDto.getUsername();
-        this.password = postDto.getPassword();
-        this.title = postDto.getTitle();
-        this.contents = postDto.getContents();
+    public Post(PostRequestDto postRequestDto, String subject) {
+        this.username = subject;
+        this.title = postRequestDto.getTitle();
+        this.contents = postRequestDto.getContents();
     }
 
-    public void update(PostDto postDto) {
-        this.username = postDto.getUsername();
-        this.password = postDto.getPassword();
-        this.title = postDto.getTitle();
-        this.contents = postDto.getContents();
+    public void update(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.contents = postRequestDto.getContents();
     }
 }

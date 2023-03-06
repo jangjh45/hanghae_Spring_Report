@@ -3,6 +3,7 @@ package com.report.hanghae_spring_report.service;
 import com.report.hanghae_spring_report.dto.*;
 import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
+import com.report.hanghae_spring_report.entity.UserEnum;
 import com.report.hanghae_spring_report.jwt.JwtUtil;
 import com.report.hanghae_spring_report.repository.PostRepository;
 import com.report.hanghae_spring_report.repository.UserRepository;
@@ -46,7 +47,7 @@ public class PostService {
             );
 
             // 요청받은 DTO로 DB에 저장할 객체 만들기, 토큰에 있는 작성자 이름을 같이 넣음
-            Post post = postRepository.saveAndFlush(new Post(postRequestDto, claims.getSubject()));
+            Post post = postRepository.saveAndFlush(new Post(postRequestDto, user.getUsername()));
             return new PostResponseDto(post);
         } else {
             throw new IllegalArgumentException("로그인 안함(토큰 없음)");
@@ -93,10 +94,19 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            // 게시글에 일치하는 게시글 아이디와 작성자 이름이 있는지 확인
-            Post post = postRepository.findByIdAndUsername(id, claims.getSubject()).orElseThrow(
-                    () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
-            );
+            Post post;
+            // 관리자 계정이면 다른 사용자 게시글 삭제가능
+            if (user.getRole().equals(UserEnum.ADMIN)) {
+                // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정 가능
+                post = postRepository.findById(id).orElseThrow(
+                        () -> new NullPointerException("(관리자)해당 게시글이 존재하지 않습니다.")
+                );
+            } else {
+                // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정 가능
+                post = postRepository.findByIdAndUsername(id, claims.getSubject()).orElseThrow(
+                        () -> new NullPointerException("(사용자)해당 게시글이 존재하지 않습니다.")
+                );
+            }
 
             post.update(postRequestDto);
             return new PostResponseDto(post);
@@ -125,9 +135,18 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            Post post = postRepository.findByIdAndUsername(id, claims.getSubject()).orElseThrow(
-                    () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
-            );
+            Post post;
+            if (user.getRole().equals(UserEnum.ADMIN)) {
+                // 관리자 계정이기 때문에 게시글 아이디만 일치하면 삭제 가능
+                post = postRepository.findById(id).orElseThrow(
+                        () -> new NullPointerException("(관리자)해당 게시글이 존재하지 않습니다.")
+                );
+            } else {
+                // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 삭제 가능
+                post = postRepository.findByIdAndUsername(id, claims.getSubject()).orElseThrow(
+                        () -> new NullPointerException("(사용자)해당 게시글이 존재하지 않습니다.")
+                );
+            }
 
             postRepository.deleteById(id);
             return new MessageResponse(StatusEnum.OK);

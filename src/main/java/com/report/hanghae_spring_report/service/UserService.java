@@ -34,12 +34,12 @@ public class UserService {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
 
-        UserEnum role = UserEnum.USER;
-        if (signupRequestDto.isAdmin()) {
-            if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+        UserEnum role = UserEnum.USER; // 사용자권한이 기본값으로 설정함
+        if (signupRequestDto.isAdmin()) { // signupRequestDto에 있는 Admin이 참이면 관리자 토큰 확인
+            if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) { // 설정된 관리자 토큰하고 일치하는가?
                 throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능 합니다.");
             }
-            role = UserEnum.ADMIN;
+            role = UserEnum.ADMIN; // 조건문이 다 통과되면 관리자계정이라고 판단
         }
         User user = new User(username, password, role);
         userRepository.save(user);

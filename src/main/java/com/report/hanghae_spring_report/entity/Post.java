@@ -11,7 +11,9 @@ import javax.persistence.*;
 @Entity // DB 테이블과 매핑 대상
 @NoArgsConstructor
 public class Post extends Timestamped{
+
     @Id
+    @Column(name = "POST_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -24,11 +26,15 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private String contents;
 
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
 
-    public Post(PostRequestDto postRequestDto, String subject) {
-        this.username = subject;
+    public Post(PostRequestDto postRequestDto, User user) {
+        this.username = user.getUsername();
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
+        this.user = user;
     }
 
     public void update(PostRequestDto postRequestDto) {

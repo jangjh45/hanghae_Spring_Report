@@ -47,7 +47,7 @@ public class PostService {
             );
 
             // 요청받은 DTO로 DB에 저장할 객체 만들기, 토큰에 있는 작성자 이름을 같이 넣음
-            Post post = postRepository.saveAndFlush(new Post(postRequestDto, user.getUsername()));
+            Post post = postRepository.saveAndFlush(new Post(postRequestDto, user));
             return new PostResponseDto(post);
         } else {
             throw new IllegalArgumentException("로그인 안함(토큰 없음)");

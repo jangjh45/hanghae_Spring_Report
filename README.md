@@ -38,8 +38,9 @@
     - 선택한 게시글을 삭제하고 Client 로 성공했다는 메시지, 상태코드 반환하기
     
 ## 1. ERD
-![스크린샷 2023-03-06 오후 10 53 48](https://user-images.githubusercontent.com/99319021/223129662-200eec15-a976-408e-a894-08f52a99a9be.png)
-
+![스크린샷 2023-03-05 오후 9 59 19](https://user-images.githubusercontent.com/99319021/222961956-55d9b5d1-a197-4763-940f-6a0bb00bb2d2.png)
 
 ## 2. API 명세서
 [📋 API 명세서 📋](https://fanatical-ornament-28d.notion.site/API-8e295fa28923465db0f0b6b13569a45e)
+
+[📋 Postman API 문서 📋](https://documenter.getpostman.com/view/25526736/2s93JowkHM)

@@ -49,10 +49,8 @@ public class PostService {
             // 요청받은 DTO로 DB에 저장할 객체 만들기, 토큰에 있는 작성자 이름을 같이 넣음
             Post post = postRepository.saveAndFlush(new Post(postRequestDto, user));
             return new PostResponseDto(post);
-        } else {
-            throw new IllegalArgumentException("로그인 안함(토큰 없음)");
-
         }
+        throw new IllegalArgumentException("로그인 안함(토큰 없음)");
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +58,7 @@ public class PostService {
         // PostResponseDto 객체만 들어올 수 있는 리스트 생성
         List<PostListResponseDto> postResponseDtoList = new ArrayList<>();
         // 데이터 베이스에서 찾은 모든값을 리스트로 저장
-        List<Post> postList = postRepository.findAllByOrderByIdDesc();
+        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
         for (Post post : postList) { // 리스트에서 하나씩 꺼내서 postResponseDtoList 리스트에 저장
             postResponseDtoList.add(new PostListResponseDto(post));
             log.info("post = {}", post);
@@ -70,7 +68,9 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public PostListResponseDto getPost(Long id) {
-        Post post = checkPost(id);
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new NullPointerException("일치하는 게시글 없음")
+        );
         return new PostListResponseDto(post);
     }
 
@@ -110,9 +110,8 @@ public class PostService {
 
             post.update(postRequestDto);
             return new PostResponseDto(post);
-        } else {
-            throw new IllegalArgumentException("로그인 안함(토큰 없음)");
         }
+        throw new IllegalArgumentException("로그인 안함(토큰 없음)");
     }
 
     @Transactional
@@ -150,14 +149,7 @@ public class PostService {
 
             postRepository.deleteById(id);
             return new MessageResponse(StatusEnum.OK);
-        } else {
-            throw new IllegalArgumentException("로그인 안함(토큰 없음)");
         }
-    }
-
-    private Post checkPost(Long id) {
-        return postRepository.findById(id).orElseThrow(
-                () -> new NullPointerException("일치하는 게시글 없음")
-        );
+        throw new IllegalArgumentException("로그인 안함(토큰 없음)");
     }
 }

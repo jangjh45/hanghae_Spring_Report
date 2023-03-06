@@ -1,11 +1,9 @@
 package com.report.hanghae_spring_report.controller;
 
 import com.report.hanghae_spring_report.dto.LoginRequestDto;
-import com.report.hanghae_spring_report.dto.MessageResponse;
 import com.report.hanghae_spring_report.dto.SignupRequestDto;
 import com.report.hanghae_spring_report.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

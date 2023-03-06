@@ -5,15 +5,12 @@ import com.report.hanghae_spring_report.dto.PostRequestDto;
 import com.report.hanghae_spring_report.dto.PostResponseDto;
 import com.report.hanghae_spring_report.service.PostService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/posts")
@@ -23,7 +20,6 @@ public class PostController {
 
     @PostMapping("/create") // 게시글 저장 name content password
     public PostResponseDto createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) {
-        log.info("postDto = {}", postRequestDto);
         return postService.createPost(postRequestDto, request);
     }
 

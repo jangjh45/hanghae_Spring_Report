@@ -19,6 +19,10 @@ public class Post extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
+
     @Column(nullable = false)
     private String username;
 
@@ -27,10 +31,6 @@ public class Post extends Timestamped{
 
     @Column(nullable = false)
     private String contents;
-
-    @ManyToOne
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;
 
     public Post(PostRequestDto postRequestDto, User user) {
         this.username = user.getUsername();

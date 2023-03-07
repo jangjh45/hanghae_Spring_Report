@@ -116,8 +116,8 @@ public class CommentService {
 
     @Transactional
     public MessageResponse deleteComment(Long postid,
-                                Long commentid,
-                                HttpServletRequest request) {
+                                         Long commentid,
+                                         HttpServletRequest request) {
 
         Post post = getPostIdCheck(postid);
 

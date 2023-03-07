@@ -26,33 +26,18 @@ public class PostService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
+    // 게시글 저장
     @Transactional
-    public PostResponseDto createPost(PostRequestDto postRequestDto, HttpServletRequest request) {
-        // Request에서 Token 가져오기
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+    public PostResponseDto createPost(PostRequestDto postRequestDto,
+                                      HttpServletRequest request) {
 
-        // 토큰이 있는 경우에만 게시글 등록 가능
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) { // JWT의 유효성을 검증하여 올바른 JWT인지 확인
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
-
-            // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-            );
-
-            // 요청받은 DTO로 DB에 저장할 객체 만들기, 토큰에 있는 작성자 이름을 같이 넣음
-            Post post = postRepository.saveAndFlush(new Post(postRequestDto, user));
-            return new PostResponseDto(post);
-        }
-        throw new IllegalArgumentException("로그인 안함(토큰 없음)");
+        User user = jwtUtil.getUserInfo(request);
+        // 요청받은 DTO로 DB에 저장할 객체 만들기, 토큰에 있는 작성자 이름을 같이 넣음
+        Post post = postRepository.saveAndFlush(new Post(postRequestDto, user));
+        return new PostResponseDto(post);
     }
 
+    // 게시글 전체 조회
     @Transactional(readOnly = true)
     public List<PostListResponseDto> getPostList() {
         // PostResponseDto 객체만 들어올 수 있는 리스트 생성
@@ -66,6 +51,7 @@ public class PostService {
         return postResponseDtoList;
     }
 
+    // 게시글 단건 조회
     @Transactional(readOnly = true)
     public PostListResponseDto getPost(Long id) {
         Post post = postRepository.findById(id).orElseThrow(
@@ -74,83 +60,26 @@ public class PostService {
         return new PostListResponseDto(post);
     }
 
+    // 게시글 수정
     @Transactional
-    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+    public PostResponseDto updatePost(Long id,
+                                      PostRequestDto postRequestDto,
+                                      HttpServletRequest request) {
 
-        // 토큰이 있는 경우에만 수정가능
-        if (token != null) {
-            // JWT의 유효성을 검증하여 올바른 토큰인지 확인
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
-
-            // 토큰에서 가져온 사용자 정보를 사용하여 DB조회
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-            );
-
-            Post post;
-            // 관리자 계정이면 모든 게시글 수정가능
-            if (user.getRole().equals(UserEnum.ADMIN)) {
-                // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정 가능
-                post = postRepository.findById(id).orElseThrow(
-                        () -> new NullPointerException("(관리자)해당 게시글이 존재하지 않습니다.")
-                );
-            } else {
-                // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정 가능
-                // 입력 받은 게시글 id와 토큰에서 가져온 userId와 일치하는 DB 조회
-                post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                        () -> new NullPointerException("(사용자)해당 게시글이 존재하지 않습니다.")
-                );
-            }
-
-            post.update(postRequestDto);
-            return new PostResponseDto(post);
-        }
-        throw new IllegalArgumentException("로그인 안함(토큰 없음)");
+        User user = jwtUtil.getUserInfo(request);
+        Post post = jwtUtil.getAdminInfo(id, user);
+        post.update(postRequestDto);
+        return new PostResponseDto(post);
     }
 
+    // 게시글 삭제
     @Transactional
-    public MessageResponse deletePost(Long id, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+    public MessageResponse deletePost(Long id,
+                                      HttpServletRequest request) {
 
-        // 토큰이 있는 경우에만 수정가능
-        if (token != null) {
-            // JWT의 유효성을 검증하여 올바른 토큰인지 확인
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
-
-            // 토큰에서 가져온 사용자 정보를 사용하여 DB조회
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-            );
-
-            Post post;
-            if (user.getRole().equals(UserEnum.ADMIN)) {
-                // 관리자 계정이기 때문에 게시글 아이디만 일치하면 삭제 가능
-                post = postRepository.findById(id).orElseThrow(
-                        () -> new NullPointerException("(관리자)해당 게시글이 존재하지 않습니다.")
-                );
-            } else {
-                // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 삭제 가능
-                post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                        () -> new NullPointerException("(사용자)해당 게시글이 존재하지 않습니다.")
-                );
-            }
-
-            postRepository.deleteById(id);
-            return new MessageResponse(StatusEnum.OK);
-        }
-        throw new IllegalArgumentException("로그인 안함(토큰 없음)");
+        User user = jwtUtil.getUserInfo(request);
+        Post post = jwtUtil.getAdminInfo(id, user);
+        postRepository.deleteById(id);
+        return new MessageResponse(StatusEnum.OK);
     }
 }

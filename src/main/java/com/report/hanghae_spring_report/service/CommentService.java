@@ -2,6 +2,8 @@ package com.report.hanghae_spring_report.service;
 
 import com.report.hanghae_spring_report.dto.CommentRequestDto;
 import com.report.hanghae_spring_report.dto.CommentResponseDto;
+import com.report.hanghae_spring_report.dto.MessageResponse;
+import com.report.hanghae_spring_report.dto.StatusEnum;
 import com.report.hanghae_spring_report.entity.Comment;
 import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
@@ -108,6 +110,51 @@ public class CommentService {
 
             comment.update(commentRequestDto);
             return new CommentResponseDto(comment);
+        }
+        throw new IllegalArgumentException("로그인 안함(토큰 없음)");
+    }
+
+    @Transactional
+    public MessageResponse deleteComment(Long postid,
+                                Long commentid,
+                                HttpServletRequest request) {
+
+        Post post = getPostIdCheck(postid);
+
+        // 토큰 가져오기
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        if (token != null) {
+            if (jwtUtil.validateToken(token)) { // JWT의 유효성을 검증하여 올바른 JWT인지 확인
+                // 토큰에서 사용자 정보 가져오기
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+
+            // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+
+            Comment comment;
+            // 관리자 계정이면 모든 댓글 삭제가능
+            if (user.getRole().equals(UserEnum.ADMIN)) {
+                // 관리자 계정이기 때문에 댓글 id만 일치하면 삭제 가능
+                comment = commentRepository.findById(commentid).orElseThrow(
+                        () -> new NullPointerException("(관리자)해당 댓글이 없습니다.")
+                );
+            } else {
+                // 사용자 계정이므로 게시글 아이디와 작성자 id가 동일하면 삭제 가능
+                // 입력 받은 게시글 id와 토큰에서 가져온 userId와 일치하는 DB 조회
+                comment = commentRepository.findByIdAndUserId(commentid, user.getId()).orElseThrow(
+                        () -> new NullPointerException("(사용자)해당 댓글이 없습니다.")
+                );
+            }
+
+            commentRepository.deleteById(commentid);
+            return new MessageResponse(StatusEnum.OK);
         }
         throw new IllegalArgumentException("로그인 안함(토큰 없음)");
     }

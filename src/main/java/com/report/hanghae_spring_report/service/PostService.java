@@ -5,7 +5,6 @@ import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
 import com.report.hanghae_spring_report.jwt.JwtUtil;
 import com.report.hanghae_spring_report.repository.PostRepository;
-import com.report.hanghae_spring_report.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +43,6 @@ public class PostService {
         List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
         for (Post post : postList) { // 리스트에서 하나씩 꺼내서 postResponseDtoList 리스트에 저장
             postResponseDtoList.add(new PostListResponseDto(post));
-            log.info("post = {}", post);
         }
         return postResponseDtoList;
     }
@@ -80,4 +78,34 @@ public class PostService {
         postRepository.deleteById(id);
         return new MessageResponse(StatusEnum.OK);
     }
+
+    //    // 게시글 전체 조회
+//    @Transactional(readOnly = true)
+//    public List<PostListResponseDto> getPostList() {
+//
+//        List<PostListResponseDto> postResponseDtoList = new ArrayList<>();
+//        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
+//        for (Post post : postList) {
+//            List<CommentResponseDto> cmtList = new ArrayList<>();
+//            for (Comment comment : post.getCommentList()) {
+//                cmtList.add(new CommentResponseDto(comment));
+//            }
+//            postResponseDtoList.add(new PostListResponseDto(post, cmtList));
+//        }
+//        return postResponseDtoList;
+//    }
+//
+//    // 게시글 단건 조회
+//    @Transactional(readOnly = true)
+//    public PostListResponseDto getPost(Long id) {
+//        Post post = postRepository.findById(id).orElseThrow(
+//                () -> new NullPointerException("일치하는 게시글 없음")
+//        );
+//        List<CommentResponseDto> cmtList = new ArrayList<>();
+//        for (Comment comment : post.getCommentList()) {
+//            cmtList.add(new CommentResponseDto(comment));
+//        }
+//        return new PostListResponseDto(post, cmtList);
+//    }
+
 }

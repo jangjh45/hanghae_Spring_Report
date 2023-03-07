@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Entity // DB 테이블과 매핑 대상
 @NoArgsConstructor
-public class Post extends Timestamped{
+public class Post extends Timestamped {
 
     @Id
     @Column(name = "POST_ID")
@@ -31,6 +31,10 @@ public class Post extends Timestamped{
 
     @Column(nullable = false)
     private String contents;
+
+    @OneToMany(mappedBy = "post")
+    @OrderBy(value = "createdAt DESC")
+    List<Comment> commentList = new ArrayList<>();
 
     public Post(PostRequestDto postRequestDto, User user) {
         this.username = user.getUsername();

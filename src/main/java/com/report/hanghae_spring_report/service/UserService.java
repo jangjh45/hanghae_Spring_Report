@@ -23,6 +23,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private static final String ADMIN_TOKEN = "wkdwlsgurwkdwlsgur";
 
+    // 회원가입
     @Transactional
     public MessageResponse signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
@@ -46,6 +47,7 @@ public class UserService {
         return new MessageResponse(StatusEnum.OK);
     }
 
+    // 로그인
     @Transactional(readOnly = true)
     public MessageResponse login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String username = loginRequestDto.getUsername();

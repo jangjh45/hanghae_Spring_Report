@@ -34,7 +34,7 @@ public class PostService {
 
         // 토큰이 있는 경우에만 게시글 등록 가능
         if (token != null) {
-            if (jwtUtil.validateToken(token)) { // JWT의 유효성을 검증하여 올바른 JWT인지 확인??
+            if (jwtUtil.validateToken(token)) { // JWT의 유효성을 검증하여 올바른 JWT인지 확인
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
@@ -95,7 +95,7 @@ public class PostService {
             );
 
             Post post;
-            // 관리자 계정이면 다른 사용자 게시글 삭제가능
+            // 관리자 계정이면 모든 게시글 수정가능
             if (user.getRole().equals(UserEnum.ADMIN)) {
                 // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정 가능
                 post = postRepository.findById(id).orElseThrow(
@@ -103,7 +103,8 @@ public class PostService {
                 );
             } else {
                 // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정 가능
-                post = postRepository.findByIdAndUsername(id, claims.getSubject()).orElseThrow(
+                // 입력 받은 게시글 id와 토큰에서 가져온 userId와 일치하는 DB 조회
+                post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
                         () -> new NullPointerException("(사용자)해당 게시글이 존재하지 않습니다.")
                 );
             }
@@ -142,7 +143,7 @@ public class PostService {
                 );
             } else {
                 // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 삭제 가능
-                post = postRepository.findByIdAndUsername(id, claims.getSubject()).orElseThrow(
+                post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
                         () -> new NullPointerException("(사용자)해당 게시글이 존재하지 않습니다.")
                 );
             }

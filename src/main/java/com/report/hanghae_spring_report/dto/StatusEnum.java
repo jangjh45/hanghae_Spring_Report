@@ -4,6 +4,7 @@ public enum StatusEnum {
 
     OK(200, "OK");
 
+
     int statusCode;
     String msg;
 

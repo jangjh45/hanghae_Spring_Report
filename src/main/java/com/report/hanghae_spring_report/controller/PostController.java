@@ -19,7 +19,9 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/create") // 게시글 저장 name content password
-    public PostResponseDto createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) {
+    public PostResponseDto createPost(
+            @RequestBody PostRequestDto postRequestDto,
+            HttpServletRequest request) {
         return postService.createPost(postRequestDto, request);
     }
 
@@ -34,12 +36,15 @@ public class PostController {
     }
 
     @PutMapping("/update/{id}") // 게시글 수정
-    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto, HttpServletRequest request) {
+    public PostResponseDto updatePost(@PathVariable Long id,
+                                      @RequestBody PostRequestDto postRequestDto,
+                                      HttpServletRequest request) {
         return postService.updatePost(id, postRequestDto, request);
     }
 
     @DeleteMapping("/delete/{id}") // 게시글 삭제
-    public ResponseEntity deletePost(@PathVariable Long id, HttpServletRequest request) {
+    public ResponseEntity deletePost(@PathVariable Long id,
+                                     HttpServletRequest request) {
         return ResponseEntity.ok().body(postService.deletePost(id, request));
     }
 }

@@ -26,13 +26,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+    public ResponseEntity signup(
+            @RequestBody @Valid SignupRequestDto signupRequestDto) {
         return ResponseEntity.ok().body(userService.signup(signupRequestDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginRequestDto loginRequestDto,
-                                HttpServletResponse response) {
+    public ResponseEntity login(
+            @RequestBody LoginRequestDto loginRequestDto,
+            HttpServletResponse response) {
         return ResponseEntity.ok().body(userService.login(loginRequestDto, response));
     }
 }

@@ -16,28 +16,28 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/create/{id}") // 댓글 작성
+    @PostMapping("/post/{id}") // 댓글 작성
     public CommentResponseDto createComment(
-            @PathVariable Long id,
-            @RequestBody CommentRequestDto commentRequestDto,
-            HttpServletRequest request) {
+            @PathVariable Long id, // 게시글 id
+            @RequestBody CommentRequestDto commentRequestDto, // 댓글 내용
+            HttpServletRequest request) { // 토큰
         return commentService.createComment(id, commentRequestDto, request);
     }
 
-    @PutMapping("/update/{postid}/{commentid}") // 댓글 수정
+    @PutMapping("/post/{postid}/comment/{commentid}") // 댓글 수정
     public CommentResponseDto updateComment(
-            @PathVariable Long postid,
-            @PathVariable Long commentid,
-            @RequestBody CommentRequestDto commentRequestDto,
-            HttpServletRequest request) {
+            @PathVariable Long postid, // 댓글을 달려고하는 게시판 id
+            @PathVariable Long commentid, // 댓글 id
+            @RequestBody CommentRequestDto commentRequestDto, // 수정 내용
+            HttpServletRequest request) { // 토큰
         return commentService.updateComment(postid, commentid, commentRequestDto, request);
     }
 
-    @DeleteMapping("/delete/{postid}/{commentid}") // 댓글 삭제
+    @DeleteMapping("/post/{postid}/comment/{commentid}") // 댓글 삭제
     public ResponseEntity deleteComment(
-            @PathVariable Long postid,
-            @PathVariable Long commentid,
-            HttpServletRequest request) {
+            @PathVariable Long postid, // 댓글을 달려고하는 게시판 id
+            @PathVariable Long commentid, // 댓글 id
+            HttpServletRequest request) { // 토큰
         return ResponseEntity.ok().body(commentService.deleteComment(postid, commentid, request));
     }
 }

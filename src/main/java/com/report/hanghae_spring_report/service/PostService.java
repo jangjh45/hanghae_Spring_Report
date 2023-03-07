@@ -3,11 +3,9 @@ package com.report.hanghae_spring_report.service;
 import com.report.hanghae_spring_report.dto.*;
 import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
-import com.report.hanghae_spring_report.entity.UserEnum;
 import com.report.hanghae_spring_report.jwt.JwtUtil;
 import com.report.hanghae_spring_report.repository.PostRepository;
 import com.report.hanghae_spring_report.repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +21,6 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
     // 게시글 저장
@@ -33,6 +30,7 @@ public class PostService {
 
         User user = jwtUtil.getUserInfo(request);
         // 요청받은 DTO로 DB에 저장할 객체 만들기, 토큰에 있는 작성자 이름을 같이 넣음
+        // 새로운 post객체를 생성하여 저장하는 데 사용한다.
         Post post = postRepository.saveAndFlush(new Post(postRequestDto, user));
         return new PostResponseDto(post);
     }
@@ -67,8 +65,8 @@ public class PostService {
                                       HttpServletRequest request) {
 
         User user = jwtUtil.getUserInfo(request);
-        Post post = jwtUtil.getAdminInfo(id, user);
-        post.update(postRequestDto);
+        Post post = jwtUtil.getPostAdminInfo(id, user);
+        post.update(postRequestDto); // 이미 존재하는 post객체를 수정하고 업데이트하는 데 사용한다.
         return new PostResponseDto(post);
     }
 
@@ -78,7 +76,7 @@ public class PostService {
                                       HttpServletRequest request) {
 
         User user = jwtUtil.getUserInfo(request);
-        Post post = jwtUtil.getAdminInfo(id, user);
+        Post post = jwtUtil.getPostAdminInfo(id, user);
         postRepository.deleteById(id);
         return new MessageResponse(StatusEnum.OK);
     }

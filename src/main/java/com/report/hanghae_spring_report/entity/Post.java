@@ -1,6 +1,5 @@
 package com.report.hanghae_spring_report.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.report.hanghae_spring_report.dto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

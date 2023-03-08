@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,7 +21,7 @@ public class PostController {
 
     @PostMapping("/create") // 게시글 저장 name content password
     public PostResponseDto createPost(
-            @RequestBody PostRequestDto postRequestDto,
+            @RequestBody @Valid PostRequestDto postRequestDto,
             HttpServletRequest request) {
         return postService.createPost(postRequestDto, request);
     }
@@ -39,7 +40,7 @@ public class PostController {
     @PutMapping("{id}") // 게시글 수정
     public PostResponseDto updatePost(
             @PathVariable Long id,
-            @RequestBody PostRequestDto postRequestDto,
+            @RequestBody @Valid PostRequestDto postRequestDto,
             HttpServletRequest request) {
         return postService.updatePost(id, postRequestDto, request);
     }

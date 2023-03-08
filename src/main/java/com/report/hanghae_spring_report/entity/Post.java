@@ -19,6 +19,11 @@ public class Post extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * 여러 개의 게시글(Post)은 하나의 사용자(User)에 속한다"는 관계를 정의
+     * @JoinColumn 어노테이션을 사용하여 데이터베이스 테이블 간의 외래키(Foreign key)를 지정
+     * "USER_ID" 칼럼을 외래키로 사용
+     */
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;

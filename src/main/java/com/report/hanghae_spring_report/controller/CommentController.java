@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class CommentController {
     @PostMapping("/post/{id}") // 댓글 작성
     public CommentResponseDto createComment(
             @PathVariable Long id, // 게시글 id
-            @RequestBody CommentRequestDto commentRequestDto, // 댓글 내용
+            @RequestBody @Valid CommentRequestDto commentRequestDto, // 댓글 내용
             HttpServletRequest request) { // 토큰
         return commentService.createComment(id, commentRequestDto, request);
     }
@@ -28,7 +29,7 @@ public class CommentController {
     public CommentResponseDto updateComment(
             @PathVariable Long postid, // 댓글을 달려고하는 게시판 id
             @PathVariable Long commentid, // 댓글 id
-            @RequestBody CommentRequestDto commentRequestDto, // 수정 내용
+            @RequestBody @Valid CommentRequestDto commentRequestDto, // 수정 내용
             HttpServletRequest request) { // 토큰
         return commentService.updateComment(postid, commentid, commentRequestDto, request);
     }

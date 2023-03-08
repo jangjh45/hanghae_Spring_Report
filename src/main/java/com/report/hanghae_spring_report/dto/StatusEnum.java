@@ -2,7 +2,7 @@ package com.report.hanghae_spring_report.dto;
 
 public enum StatusEnum {
 
-    OK(200, "OK");
+    OK(200, "성공");
 
 
     int statusCode;

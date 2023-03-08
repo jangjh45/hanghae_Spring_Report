@@ -1,6 +1,8 @@
 package com.report.hanghae_spring_report.jwt;
 
 
+import com.report.hanghae_spring_report.common.ApiException;
+import com.report.hanghae_spring_report.common.ExceptionEnum;
 import com.report.hanghae_spring_report.entity.Comment;
 import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
@@ -104,16 +106,16 @@ public class JwtUtil {
                 // 토큰에서 사용자 정보 가져오기
                 claims = getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
             }
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
             user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
             );
             return user;
         }
-        throw new IllegalArgumentException("로그인 안함(토큰 없음)");
+        throw new ApiException(ExceptionEnum.NOT_TOKEN);
     }
 
     // 관리자 계정만 모든 게시글 수정, 삭제 가능
@@ -122,12 +124,12 @@ public class JwtUtil {
         if (user.getRole().equals(UserEnum.ADMIN)) {
             // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정,삭제 가능
             post = postRepository.findById(id).orElseThrow(
-                    () -> new NullPointerException("(관리자)해당 게시글이 존재하지 않습니다.")
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ADMIN)
             );
         } else {
             // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정,삭제 가능
             post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new NullPointerException("(사용자)해당 게시글이 존재하지 않습니다.")
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
             );
         }
         return post;
@@ -139,12 +141,12 @@ public class JwtUtil {
         if (user.getRole().equals(UserEnum.ADMIN)) {
             // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정,삭제 가능
             comment = commentRepository.findById(id).orElseThrow(
-                    () -> new NullPointerException("(관리자)해당 게시글이 존재하지 않습니다.")
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_COMMENT_ADMIN)
             );
         } else {
             // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정,삭제 가능
             comment = commentRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new NullPointerException("(사용자)해당 게시글이 존재하지 않습니다.")
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_COMMENT)
             );
         }
         return comment;

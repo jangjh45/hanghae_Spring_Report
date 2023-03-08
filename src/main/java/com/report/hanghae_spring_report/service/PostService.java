@@ -1,5 +1,7 @@
 package com.report.hanghae_spring_report.service;
 
+import com.report.hanghae_spring_report.common.ApiException;
+import com.report.hanghae_spring_report.common.ExceptionEnum;
 import com.report.hanghae_spring_report.dto.*;
 import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
@@ -51,7 +53,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostListResponseDto getPost(Long id) {
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new NullPointerException("일치하는 게시글 없음")
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ALL)
         );
         return new PostListResponseDto(post);
     }

@@ -1,5 +1,7 @@
 package com.report.hanghae_spring_report.service;
 
+import com.report.hanghae_spring_report.common.ApiException;
+import com.report.hanghae_spring_report.common.ExceptionEnum;
 import com.report.hanghae_spring_report.dto.CommentRequestDto;
 import com.report.hanghae_spring_report.dto.CommentResponseDto;
 import com.report.hanghae_spring_report.dto.MessageResponse;
@@ -32,7 +34,7 @@ public class CommentService {
     // 게시글이 존재하는지 확인
     public Post getPostIdCheck(Long id) { // 게시글 id
         return postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("댓글에 연관된 게시글이 없습니다.")
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ALL)
         );
     }
 

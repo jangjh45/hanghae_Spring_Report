@@ -18,16 +18,21 @@ import javax.validation.Valid;
 @RequestMapping("/post/user")
 public class UserController {
 
+    // UserController 클래스의 생성자에서 주입된 UserService 클래스의 인스턴스를 저장하는 필드
+    // UserService 인스턴스를 통해 비즈니스 로직을 수행
+    // 이를 의존성 주입(Dependency Injection)이라고 한다.
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+    public ResponseEntity signup(
+            @RequestBody @Valid SignupRequestDto signupRequestDto) {
         return ResponseEntity.ok().body(userService.signup(signupRequestDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginRequestDto loginRequestDto,
-                                HttpServletResponse response) {
+    public ResponseEntity login(
+            @RequestBody LoginRequestDto loginRequestDto,
+            HttpServletResponse response) {
         return ResponseEntity.ok().body(userService.login(loginRequestDto, response));
     }
 }

@@ -1,7 +1,15 @@
 package com.report.hanghae_spring_report.jwt;
 
 
+import com.report.hanghae_spring_report.common.ApiException;
+import com.report.hanghae_spring_report.common.ExceptionEnum;
+import com.report.hanghae_spring_report.entity.Comment;
+import com.report.hanghae_spring_report.entity.Post;
+import com.report.hanghae_spring_report.entity.User;
 import com.report.hanghae_spring_report.entity.UserEnum;
+import com.report.hanghae_spring_report.repository.CommentRepository;
+import com.report.hanghae_spring_report.repository.PostRepository;
+import com.report.hanghae_spring_report.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +28,10 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
+
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
@@ -82,4 +94,61 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
+    // 토큰 검증과 사용자 존재여부 확인 함수
+    public User getUserInfo(HttpServletRequest request) {
+        String token = resolveToken(request);
+        Claims claims;
+        User user = null;
+
+        if (token != null) {
+            // JWT의 유효성을 검증하여 올바른 JWT인지 확인
+            if (validateToken(token)) {
+                // 토큰에서 사용자 정보 가져오기
+                claims = getUserInfoFromToken(token);
+            } else {
+                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
+            }
+
+            // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
+            user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
+            );
+            return user;
+        }
+        throw new ApiException(ExceptionEnum.NOT_TOKEN);
+    }
+
+    // 관리자 계정만 모든 게시글 수정, 삭제 가능
+    public Post getPostAdminInfo(Long id, User user) {
+        Post post;
+        if (user.getRole().equals(UserEnum.ADMIN)) {
+            // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정,삭제 가능
+            post = postRepository.findById(id).orElseThrow(
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ADMIN)
+            );
+        } else {
+            // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정,삭제 가능
+            post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
+            );
+        }
+        return post;
+    }
+
+    // 관리자 계정만 모든 댓글 수정, 삭제 가능
+    public Comment getCommentAdminInfo(Long id, User user) {
+        Comment comment;
+        if (user.getRole().equals(UserEnum.ADMIN)) {
+            // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정,삭제 가능
+            comment = commentRepository.findById(id).orElseThrow(
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_COMMENT_ADMIN)
+            );
+        } else {
+            // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정,삭제 가능
+            comment = commentRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_COMMENT)
+            );
+        }
+        return comment;
+    }
 }

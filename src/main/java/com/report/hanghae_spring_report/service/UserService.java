@@ -1,5 +1,7 @@
 package com.report.hanghae_spring_report.service;
 
+import com.report.hanghae_spring_report.common.ApiException;
+import com.report.hanghae_spring_report.common.ExceptionEnum;
 import com.report.hanghae_spring_report.dto.LoginRequestDto;
 import com.report.hanghae_spring_report.dto.MessageResponse;
 import com.report.hanghae_spring_report.dto.SignupRequestDto;
@@ -32,15 +34,16 @@ public class UserService {
         // 회원 중복 확인
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) { // Optional 객체가 값을 가지고 있다면 true, 값이 없다면 false 리턴
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+//            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+            throw new ApiException(ExceptionEnum.NOT_FOUND_USER);
         }
 
-        UserEnum role = UserEnum.USER;
-        if (signupRequestDto.isAdmin()) {
-            if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+        UserEnum role = UserEnum.USER; // 사용자권한이 기본값으로 설정함
+        if (signupRequestDto.isAdmin()) { // signupRequestDto에 있는 Admin이 참이면 관리자 토큰 확인
+            if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) { // 설정된 관리자 토큰하고 일치하는가?
                 throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능 합니다.");
             }
-            role = UserEnum.ADMIN;
+            role = UserEnum.ADMIN; // 조건문이 다 통과되면 관리자계정이라고 판단
         }
         User user = new User(username, password, role);
         userRepository.save(user);
@@ -55,11 +58,11 @@ public class UserService {
 
         // 사용자 확인
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
         );
         // 비밀번호 확인
         if (!user.getPassword().equals(password)) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new ApiException(ExceptionEnum.NOT_FOUND_USER);
         }
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
         return new MessageResponse(StatusEnum.OK);

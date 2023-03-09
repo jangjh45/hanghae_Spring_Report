@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice // 예외 처리를 담당하는 클래스에 적용
 public class ApiExceptionController {
     @ExceptionHandler(value = {ApiException.class})
     protected ResponseEntity<ApiExceptionResponse> handleCustomException(ApiException e) {

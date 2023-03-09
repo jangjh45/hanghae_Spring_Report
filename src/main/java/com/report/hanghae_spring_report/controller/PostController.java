@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,36 +18,37 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping("/create") // 게시글 저장 name content password
-    public PostResponseDto createPost(
-            @RequestBody @Valid PostRequestDto postRequestDto,
-            HttpServletRequest request) {
+    // 게시글 저장 name content password
+    @PostMapping("/create")
+    public PostResponseDto createPost(@RequestBody PostRequestDto postRequestDto,
+                                      HttpServletRequest request) {
         return postService.createPost(postRequestDto, request);
     }
 
-    @GetMapping("/list") // 게시글 전체 조회
+    // 게시글 전체 조회
+    @GetMapping("/list")
     public List<PostListResponseDto> getPostList() {
         return postService.getPostList();
     }
 
-    @GetMapping("/list/{id}") // 게시글 단건 조회
-    public PostListResponseDto getPost(
-            @PathVariable Long id) {
+    // 게시글 단건 조회
+    @GetMapping("/list/{id}")
+    public PostListResponseDto getPost(@PathVariable Long id) {
         return postService.getPost(id);
     }
 
-    @PutMapping("{id}") // 게시글 수정
-    public PostResponseDto updatePost(
-            @PathVariable Long id,
-            @RequestBody @Valid PostRequestDto postRequestDto,
-            HttpServletRequest request) {
+    // 게시글 수정
+    @PutMapping("/update/{id}")
+    public PostResponseDto updatePost(@PathVariable Long id,
+                                      @RequestBody PostRequestDto postRequestDto,
+                                      HttpServletRequest request) {
         return postService.updatePost(id, postRequestDto, request);
     }
 
-    @DeleteMapping("{id}") // 게시글 삭제
-    public ResponseEntity deletePost(
-            @PathVariable Long id,
-            HttpServletRequest request) {
+    // 게시글 삭제
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity deletePost(@PathVariable Long id,
+                                     HttpServletRequest request) {
         return ResponseEntity.ok().body(postService.deletePost(id, request));
     }
 }

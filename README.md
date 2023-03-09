@@ -63,4 +63,5 @@
 
 ## 2. API 명세서
 [📋 API 명세서](https://fanatical-ornament-28d.notion.site/API-8e295fa28923465db0f0b6b13569a45e)
+
 [📋 Postman API 문서](https://documenter.getpostman.com/view/25526736/2s93JowkHM)

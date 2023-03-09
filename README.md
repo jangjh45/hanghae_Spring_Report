@@ -62,6 +62,6 @@
 ![스크린샷 2023-03-08 오후 5 49 41](https://user-images.githubusercontent.com/99319021/224049384-3cf6e830-d7e1-4be9-9672-0f555d574d84.png)
 
 ## 2. API 명세서
-[📋 API 명세서](https://fanatical-ornament-28d.notion.site/API-8e295fa28923465db0f0b6b13569a45e)
+[📋 API 명세서](https://fanatical-ornament-28d.notion.site/API-Lv-3-9098de9547ad43e5998d88855d0b7a80)
 
 [📋 Postman API 문서](https://documenter.getpostman.com/view/25526736/2s93JowkHM)

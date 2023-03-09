@@ -38,7 +38,7 @@ public class PostController {
     }
 
     // 게시글 수정
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public PostResponseDto updatePost(@PathVariable Long id,
                                       @RequestBody PostRequestDto postRequestDto,
                                       HttpServletRequest request) {
@@ -46,7 +46,7 @@ public class PostController {
     }
 
     // 게시글 삭제
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity deletePost(@PathVariable Long id,
                                      HttpServletRequest request) {
         return ResponseEntity.ok().body(postService.deletePost(id, request));

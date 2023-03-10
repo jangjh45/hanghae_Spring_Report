@@ -32,7 +32,7 @@ public class PostListResponseDto {
 
     public PostListResponseDto(Post post) {
         this.id = post.getId();
-        this.username = post.getUsername();
+        this.username = post.getUser().getUsername();
         this.title = post.getTitle();
         this.contents = post.getContents();
         this.createdAt = post.getCreatedAt();

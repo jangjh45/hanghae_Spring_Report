@@ -23,12 +23,14 @@ public class UserController {
     // 이를 의존성 주입(Dependency Injection)이라고 한다.
     private final UserService userService;
 
+    //    @ApiOperation(value = "signupTest", notes = "회원가입 테스트중")
     @PostMapping("/signup")
     public ResponseEntity signup(
             @RequestBody @Valid SignupRequestDto signupRequestDto) {
         return ResponseEntity.ok().body(userService.signup(signupRequestDto));
     }
 
+    //    @ApiOperation(value = "loginTest", notes = "로그인 테스트중")
     @PostMapping("/login")
     public ResponseEntity login(
             @RequestBody LoginRequestDto loginRequestDto,

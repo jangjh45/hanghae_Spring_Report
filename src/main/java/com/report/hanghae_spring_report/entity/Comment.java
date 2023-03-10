@@ -34,8 +34,8 @@ public class Comment extends Timestamped {
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private String username;
+//    @Column(nullable = false)
+//    private String username;
 
     @Column(nullable = false)
     private String comment;
@@ -43,7 +43,7 @@ public class Comment extends Timestamped {
     public Comment(Post post, CommentRequestDto commentRequestDto, User user) {
         this.post = post;
         this.user = user;
-        this.username = user.getUsername();
+//        this.username = user.getUsername();
         this.comment = commentRequestDto.getComment();
     }
 

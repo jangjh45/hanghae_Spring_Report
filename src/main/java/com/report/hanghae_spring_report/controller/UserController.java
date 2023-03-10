@@ -3,6 +3,7 @@ package com.report.hanghae_spring_report.controller;
 import com.report.hanghae_spring_report.dto.LoginRequestDto;
 import com.report.hanghae_spring_report.dto.SignupRequestDto;
 import com.report.hanghae_spring_report.service.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,12 +24,14 @@ public class UserController {
     // 이를 의존성 주입(Dependency Injection)이라고 한다.
     private final UserService userService;
 
+    @ApiOperation(value = "signupTest", notes = "회원가입 테스트중")
     @PostMapping("/signup")
     public ResponseEntity signup(
             @RequestBody @Valid SignupRequestDto signupRequestDto) {
         return ResponseEntity.ok().body(userService.signup(signupRequestDto));
     }
 
+    @ApiOperation(value = "loginTest", notes = "로그인 테스트중")
     @PostMapping("/login")
     public ResponseEntity login(
             @RequestBody LoginRequestDto loginRequestDto,

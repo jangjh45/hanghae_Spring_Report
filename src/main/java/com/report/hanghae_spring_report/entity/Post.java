@@ -28,9 +28,6 @@ public class Post extends Timestamped {
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
-//    @Column(nullable = false)
-//    private String username;
-
     @Column(nullable = false)
     private String title;
 
@@ -51,7 +48,6 @@ public class Post extends Timestamped {
     List<Comment> commentList = new ArrayList<>();
 
     public Post(PostRequestDto postRequestDto, User user) {
-//        this.username = user.getUsername();
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
         this.user = user;

@@ -7,7 +7,6 @@ import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
 import com.report.hanghae_spring_report.jwt.JwtUtil;
 import com.report.hanghae_spring_report.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +17,15 @@ import java.util.List;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
     private final JwtUtil jwtUtil;
+
+    public PostService(PostRepository postRepository, JwtUtil jwtUtil) {
+        this.postRepository = postRepository;
+        this.jwtUtil = jwtUtil;
+    }
 
     // 게시글 저장
     @Transactional

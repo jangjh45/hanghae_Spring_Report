@@ -9,13 +9,9 @@ import com.report.hanghae_spring_report.dto.StatusEnum;
 import com.report.hanghae_spring_report.entity.Comment;
 import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
-import com.report.hanghae_spring_report.entity.UserEnum;
 import com.report.hanghae_spring_report.jwt.JwtUtil;
 import com.report.hanghae_spring_report.repository.CommentRepository;
 import com.report.hanghae_spring_report.repository.PostRepository;
-import com.report.hanghae_spring_report.repository.UserRepository;
-import io.jsonwebtoken.Claims;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,12 +20,17 @@ import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class CommentService {
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
+
+    public CommentService(PostRepository postRepository, CommentRepository commentRepository, JwtUtil jwtUtil) {
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
+        this.jwtUtil = jwtUtil;
+    }
 
     // 게시글이 존재하는지 확인
     public Post getPostIdCheck(Long id) { // 게시글 id

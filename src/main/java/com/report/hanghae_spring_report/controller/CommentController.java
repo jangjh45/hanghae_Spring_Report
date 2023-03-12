@@ -3,7 +3,6 @@ package com.report.hanghae_spring_report.controller;
 import com.report.hanghae_spring_report.dto.CommentRequestDto;
 import com.report.hanghae_spring_report.dto.CommentResponseDto;
 import com.report.hanghae_spring_report.service.CommentService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,11 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/posts/comments")
 public class CommentController {
 
     private final CommentService commentService;
+
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
+    }
 
     @PostMapping("/post/{id}") // 댓글 작성
     public CommentResponseDto createComment(

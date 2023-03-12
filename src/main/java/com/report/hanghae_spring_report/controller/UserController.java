@@ -3,7 +3,6 @@ package com.report.hanghae_spring_report.controller;
 import com.report.hanghae_spring_report.dto.LoginRequestDto;
 import com.report.hanghae_spring_report.dto.SignupRequestDto;
 import com.report.hanghae_spring_report.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/post/user")
 public class UserController {
 
@@ -22,6 +20,10 @@ public class UserController {
     // UserService 인스턴스를 통해 비즈니스 로직을 수행
     // 이를 의존성 주입(Dependency Injection)이라고 한다.
     private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     //    @ApiOperation(value = "signupTest", notes = "회원가입 테스트중")
     @PostMapping("/signup")

@@ -1,11 +1,9 @@
 package com.report.hanghae_spring_report.dto;
 
 import com.report.hanghae_spring_report.entity.Comment;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
 public class CommentResponseDto {
     private Long id;
     private String username;
@@ -20,4 +18,17 @@ public class CommentResponseDto {
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
 }

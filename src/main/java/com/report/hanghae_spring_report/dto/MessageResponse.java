@@ -1,10 +1,5 @@
 package com.report.hanghae_spring_report.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class MessageResponse {
 
     private int status;
@@ -14,4 +9,21 @@ public class MessageResponse {
         this.status = statusEnum.statusCode;
         this.messege = statusEnum.msg;
     }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getMessege() {
+        return messege;
+    }
+
+    public void setMessege(String messege) {
+        this.messege = messege;
+    }
+
 }

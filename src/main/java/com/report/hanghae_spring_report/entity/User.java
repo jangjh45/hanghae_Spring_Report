@@ -1,8 +1,5 @@
 package com.report.hanghae_spring_report.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +10,6 @@ import java.util.List;
  * Post 엔티티에는 @ManyToOne 어노테이션을 추가하여 User 엔티티와의 관계를 정의합니다.
  * 이 때, 양쪽 엔티티에서 모두 mappedBy 속성을 사용하여 관계의 주인을 지정해야 합니다.
  */
-@Getter
-@NoArgsConstructor
 @Entity(name = "users")
 public class User {
 
@@ -51,10 +46,29 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Comment> commentList = new ArrayList<>();
 
+    public User() {
+    }
+
     public User(String username, String password, UserEnum role) {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public UserEnum getRole() {
+        return role;
     }
 }
 

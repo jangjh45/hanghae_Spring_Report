@@ -4,7 +4,6 @@ import com.report.hanghae_spring_report.dto.PostListResponseDto;
 import com.report.hanghae_spring_report.dto.PostRequestDto;
 import com.report.hanghae_spring_report.dto.PostResponseDto;
 import com.report.hanghae_spring_report.service.PostService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,11 +11,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/posts")
 public class PostController {
 
     private final PostService postService;
+
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
 
     // 게시글 저장 name content password
     @PostMapping("/create")

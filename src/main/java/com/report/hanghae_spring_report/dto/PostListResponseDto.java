@@ -2,7 +2,6 @@ package com.report.hanghae_spring_report.dto;
 
 import com.report.hanghae_spring_report.entity.Comment;
 import com.report.hanghae_spring_report.entity.Post;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import java.util.List;
  * 이렇게 생성된 PostListResponseDto 객체는 HTTP 응답 메시지의 본문에 담겨서 클라이언트로 전송됩니다.
  * 클라이언트는 이 정보를 사용하여 Post를 화면에 표시하거나, 다른 작업을 수행할 수 있습니다.
  */
-@Getter
 public class PostListResponseDto {
     private Long id;
     private String username;
@@ -51,4 +49,13 @@ public class PostListResponseDto {
 //        this.modifiedAt = post.getModifiedAt();
 //        this.commentList = cmtList;
 //    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
 }

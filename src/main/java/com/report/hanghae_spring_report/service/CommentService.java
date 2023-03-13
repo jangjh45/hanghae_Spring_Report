@@ -31,6 +31,23 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
 
+    // 관리자 계정만 모든 댓글 수정, 삭제 가능
+    public Comment getCommentAdminInfo(Long id, User user) {
+        Comment comment;
+        if (user.getRole().equals(UserEnum.ADMIN)) {
+            // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정,삭제 가능
+            comment = commentRepository.findById(id).orElseThrow(
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_COMMENT_ADMIN)
+            );
+        } else {
+            // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정,삭제 가능
+            comment = commentRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_COMMENT)
+            );
+        }
+        return comment;
+    }
+
     // 게시글이 존재하는지 확인
     public Post getPostIdCheck(Long id) { // 게시글 id
         return postRepository.findById(id).orElseThrow(
@@ -65,7 +82,7 @@ public class CommentService {
         Post post = getPostIdCheck(postid);
         // 토큰 검증과 사용자 존재여부 확인 함수
         User user = jwtUtil.getUserInfo(request);
-        Comment comment = jwtUtil.getCommentAdminInfo(commentid, user);
+        Comment comment = getCommentAdminInfo(commentid, user);
         comment.update(commentRequestDto); // 이미 존재하는 Comment 객체를 수정하고 업데이트하는 데 사용한다.
         return new CommentResponseDto(comment);
     }
@@ -78,7 +95,7 @@ public class CommentService {
 
         Post post = getPostIdCheck(postid);
         User user = jwtUtil.getUserInfo(request);
-        Comment comment = jwtUtil.getCommentAdminInfo(commentid, user);
+        Comment comment = getCommentAdminInfo(commentid, user);
         commentRepository.deleteById(commentid);
         return new MessageResponse(StatusEnum.OK);
     }

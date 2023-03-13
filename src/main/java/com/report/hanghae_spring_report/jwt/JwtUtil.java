@@ -3,12 +3,8 @@ package com.report.hanghae_spring_report.jwt;
 
 import com.report.hanghae_spring_report.common.ApiException;
 import com.report.hanghae_spring_report.common.ExceptionEnum;
-import com.report.hanghae_spring_report.entity.Comment;
-import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
 import com.report.hanghae_spring_report.entity.UserEnum;
-import com.report.hanghae_spring_report.repository.CommentRepository;
-import com.report.hanghae_spring_report.repository.PostRepository;
 import com.report.hanghae_spring_report.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -28,8 +24,6 @@ import java.util.Date;
 public class JwtUtil {
 
     private final UserRepository userRepository;
-    private final PostRepository postRepository;
-    private final CommentRepository commentRepository;
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
@@ -41,10 +35,8 @@ public class JwtUtil {
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-    public JwtUtil(UserRepository userRepository, PostRepository postRepository, CommentRepository commentRepository) {
+    public JwtUtil(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
     }
 
     @PostConstruct
@@ -122,37 +114,4 @@ public class JwtUtil {
         throw new ApiException(ExceptionEnum.NOT_TOKEN);
     }
 
-    // 관리자 계정만 모든 게시글 수정, 삭제 가능
-    public Post getPostAdminInfo(Long id, User user) {
-        Post post;
-        if (user.getRole().equals(UserEnum.ADMIN)) {
-            // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정,삭제 가능
-            post = postRepository.findById(id).orElseThrow(
-                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ADMIN)
-            );
-        } else {
-            // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정,삭제 가능
-            post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
-            );
-        }
-        return post;
-    }
-
-    // 관리자 계정만 모든 댓글 수정, 삭제 가능
-    public Comment getCommentAdminInfo(Long id, User user) {
-        Comment comment;
-        if (user.getRole().equals(UserEnum.ADMIN)) {
-            // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정,삭제 가능
-            comment = commentRepository.findById(id).orElseThrow(
-                    () -> new ApiException(ExceptionEnum.NOT_FOUND_COMMENT_ADMIN)
-            );
-        } else {
-            // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정,삭제 가능
-            comment = commentRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new ApiException(ExceptionEnum.NOT_FOUND_COMMENT)
-            );
-        }
-        return comment;
-    }
 }

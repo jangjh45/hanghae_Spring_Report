@@ -5,6 +5,7 @@ import com.report.hanghae_spring_report.common.ExceptionEnum;
 import com.report.hanghae_spring_report.dto.*;
 import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
+import com.report.hanghae_spring_report.entity.UserEnum;
 import com.report.hanghae_spring_report.jwt.JwtUtil;
 import com.report.hanghae_spring_report.repository.PostRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,23 @@ public class PostService {
     public PostService(PostRepository postRepository, JwtUtil jwtUtil) {
         this.postRepository = postRepository;
         this.jwtUtil = jwtUtil;
+    }
+
+    // 관리자 계정만 모든 게시글 수정, 삭제 가능
+    public Post getPostAdminInfo(Long id, User user) {
+        Post post;
+        if (user.getRole().equals(UserEnum.ADMIN)) {
+            // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정,삭제 가능
+            post = postRepository.findById(id).orElseThrow(
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ADMIN)
+            );
+        } else {
+            // 사용자 계정이므로 게시글 아이디와 작성자 이름이 있는지 확인하고 있으면 수정,삭제 가능
+            post = postRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
+            );
+        }
+        return post;
     }
 
     // 게시글 저장
@@ -68,7 +86,7 @@ public class PostService {
                                       HttpServletRequest request) {
 
         User user = jwtUtil.getUserInfo(request);
-        Post post = jwtUtil.getPostAdminInfo(id, user);
+        Post post = getPostAdminInfo(id, user);
         post.update(postRequestDto); // 이미 존재하는 post객체를 수정하고 업데이트하는 데 사용한다.
         return new PostResponseDto(post);
     }
@@ -79,12 +97,12 @@ public class PostService {
                                       HttpServletRequest request) {
 
         User user = jwtUtil.getUserInfo(request);
-        Post post = jwtUtil.getPostAdminInfo(id, user);
+        Post post = getPostAdminInfo(id, user);
         postRepository.deleteById(id);
         return new MessageResponse(StatusEnum.OK);
     }
 
-    //    // 게시글 전체 조회
+//    게시글 전체 조회
 //    @Transactional(readOnly = true)
 //    public List<PostListResponseDto> getPostList() {
 //
@@ -100,7 +118,7 @@ public class PostService {
 //        return postResponseDtoList;
 //    }
 //
-//    // 게시글 단건 조회
+//    게시글 단건 조회
 //    @Transactional(readOnly = true)
 //    public PostListResponseDto getPost(Long id) {
 //        Post post = postRepository.findById(id).orElseThrow(

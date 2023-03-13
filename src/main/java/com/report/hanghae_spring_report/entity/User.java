@@ -37,7 +37,7 @@ public class User {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private UserEnum role;
+    private UserRoleEnum role;
 
     /**
      * 사용자(User)는 여러 개의 게시글(Post) 또는 댓글(Comment)을 가질 수 있다"는 관계를 정의
@@ -51,7 +51,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Comment> commentList = new ArrayList<>();
 
-    public User(String username, String password, UserEnum role) {
+    public User(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;
         this.role = role;

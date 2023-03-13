@@ -5,7 +5,7 @@ import com.report.hanghae_spring_report.common.ExceptionEnum;
 import com.report.hanghae_spring_report.dto.*;
 import com.report.hanghae_spring_report.entity.Post;
 import com.report.hanghae_spring_report.entity.User;
-import com.report.hanghae_spring_report.entity.UserEnum;
+import com.report.hanghae_spring_report.entity.UserRoleEnum;
 import com.report.hanghae_spring_report.jwt.JwtUtil;
 import com.report.hanghae_spring_report.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class PostService {
     // 관리자 계정만 모든 게시글 수정, 삭제 가능
     public Post getPostAdminInfo(Long id, User user) {
         Post post;
-        if (user.getRole().equals(UserEnum.ADMIN)) {
+        if (user.getRole().equals(UserRoleEnum.ADMIN)) {
             // 관리자 계정이기 때문에 게시글 아이디만 일치하면 수정,삭제 가능
             post = postRepository.findById(id).orElseThrow(
                     () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ADMIN)
@@ -45,9 +44,8 @@ public class PostService {
     // 게시글 저장
     @Transactional
     public PostResponseDto createPost(PostRequestDto postRequestDto,
-                                      HttpServletRequest request) {
+                                      User user) {
 
-        User user = jwtUtil.getUserInfo(request);
         // 요청받은 DTO로 DB에 저장할 객체 만들기, 토큰에 있는 작성자 이름을 같이 넣음
         // 새로운 post객체를 생성하여 저장하는 데 사용한다.
         Post post = postRepository.saveAndFlush(new Post(postRequestDto, user));
@@ -80,9 +78,8 @@ public class PostService {
     @Transactional
     public PostResponseDto updatePost(Long id,
                                       PostRequestDto postRequestDto,
-                                      HttpServletRequest request) {
+                                      User user) {
 
-        User user = jwtUtil.getUserInfo(request);
         Post post = getPostAdminInfo(id, user);
         post.update(postRequestDto); // 이미 존재하는 post객체를 수정하고 업데이트하는 데 사용한다.
         return new PostResponseDto(post);
@@ -91,41 +88,11 @@ public class PostService {
     // 게시글 삭제
     @Transactional
     public MessageResponse deletePost(Long id,
-                                      HttpServletRequest request) {
+                                      User user) {
 
-        User user = jwtUtil.getUserInfo(request);
-        Post post = getPostAdminInfo(id, user);
+        getPostAdminInfo(id, user);
         postRepository.deleteById(id);
         return new MessageResponse(StatusEnum.OK);
     }
-
-    //    // 게시글 전체 조회
-//    @Transactional(readOnly = true)
-//    public List<PostListResponseDto> getPostList() {
-//
-//        List<PostListResponseDto> postResponseDtoList = new ArrayList<>();
-//        List<Post> postList = postRepository.findAllByOrderByCreatedAtDesc();
-//        for (Post post : postList) {
-//            List<CommentResponseDto> cmtList = new ArrayList<>();
-//            for (Comment comment : post.getCommentList()) {
-//                cmtList.add(new CommentResponseDto(comment));
-//            }
-//            postResponseDtoList.add(new PostListResponseDto(post, cmtList));
-//        }
-//        return postResponseDtoList;
-//    }
-//
-//    // 게시글 단건 조회
-//    @Transactional(readOnly = true)
-//    public PostListResponseDto getPost(Long id) {
-//        Post post = postRepository.findById(id).orElseThrow(
-//                () -> new NullPointerException("일치하는 게시글 없음")
-//        );
-//        List<CommentResponseDto> cmtList = new ArrayList<>();
-//        for (Comment comment : post.getCommentList()) {
-//            cmtList.add(new CommentResponseDto(comment));
-//        }
-//        return new PostListResponseDto(post, cmtList);
-//    }
 
 }

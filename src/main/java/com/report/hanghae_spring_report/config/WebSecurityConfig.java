@@ -30,6 +30,9 @@ public class WebSecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+        // 비밀번호 암호화 기능 등록
+        // 적응형 단방향 함수를 사용
+        // 단방향은 평문에서 암호화가 가능하지만 다시 평문으로 돌리는 것은 불가능하다.
         return new BCryptPasswordEncoder();
     }
 
@@ -46,6 +49,8 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
+        // CSRF(Cross-Site Request Forgery, 사이트 간 요청 위조)
+        // 웹 애플리케이션 취약점 중 하나로, 인증된 사용자의 권한을 사용하여 악성 요청을 전송하는 공격
         http.csrf().disable();
 
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
@@ -68,6 +73,10 @@ public class WebSecurityConfig {
                 // UsernamePasswordAuthenticationFilter 이것으로 인증처리가 되지만
                 // JWT토큰을 사용하는 시큐리티 커스텀 필터를 사용할 것이다.
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        // UsernamePasswordAuthenticationFilter
+        // Form Login 기반이 사용되고 이것은 인증이 필요한 URL요청이 들어왔을 때
+        // username 과 password 가 인증이 안되어 있으면 로그인페이지가 반환
+
 
         // 내장 기본 로그인 사용
 //        http.formLogin();

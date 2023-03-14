@@ -41,14 +41,4 @@ public class PostListResponseDto {
             commentList.add(new CommentResponseDto(comment));
         }
     }
-
-//    public PostListResponseDto(Post post, List<CommentResponseDto> cmtList) {
-//        this.id = post.getId();
-//        this.username = post.getUsername();
-//        this.title = post.getTitle();
-//        this.contents = post.getContents();
-//        this.createdAt = post.getCreatedAt();
-//        this.modifiedAt = post.getModifiedAt();
-//        this.commentList = cmtList;
-//    }
 }

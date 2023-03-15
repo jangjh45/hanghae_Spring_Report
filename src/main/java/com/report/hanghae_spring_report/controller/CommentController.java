@@ -47,4 +47,11 @@ public class CommentController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) { // 인증된 사용자의 정보
         return ResponseEntity.ok().body(commentService.deleteComment(postid, commentid, userDetails.getUser()));
     }
+
+    @PostMapping("/comment/{commentid}") // 댓글 좋아요
+    public ResponseEntity GoodComment(
+            @PathVariable Long commentid,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(commentService.commentLike(commentid, userDetails));
+    }
 }

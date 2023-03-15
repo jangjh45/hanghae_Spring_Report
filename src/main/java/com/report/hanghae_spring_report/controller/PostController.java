@@ -60,4 +60,12 @@ public class PostController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok().body(postService.deletePost(id, userDetails.getUser()));
     }
+
+    // 게시글 좋아요
+    @PostMapping("/post/{postid}")
+    public ResponseEntity GoodPost(
+            @PathVariable Long postid,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(postService.postLike(postid, userDetails));
+    }
 }

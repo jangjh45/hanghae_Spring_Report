@@ -6,17 +6,17 @@ import com.report.hanghae_spring_report.dto.CommentRequestDto;
 import com.report.hanghae_spring_report.dto.CommentResponseDto;
 import com.report.hanghae_spring_report.dto.MessageResponse;
 import com.report.hanghae_spring_report.dto.StatusEnum;
-import com.report.hanghae_spring_report.entity.Comment;
-import com.report.hanghae_spring_report.entity.Post;
-import com.report.hanghae_spring_report.entity.User;
-import com.report.hanghae_spring_report.entity.UserRoleEnum;
-import com.report.hanghae_spring_report.jwt.JwtUtil;
+import com.report.hanghae_spring_report.entity.*;
+import com.report.hanghae_spring_report.repository.CommentLikeRepository;
 import com.report.hanghae_spring_report.repository.CommentRepository;
 import com.report.hanghae_spring_report.repository.PostRepository;
+import com.report.hanghae_spring_report.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -25,7 +25,7 @@ public class CommentService {
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final JwtUtil jwtUtil;
+    private final CommentLikeRepository commentLikeRepository;
 
     // 관리자 계정만 모든 댓글 수정, 삭제 가능
     public Comment getCommentAdminInfo(Long id, User user) {
@@ -88,6 +88,25 @@ public class CommentService {
         getPostIdCheck(postid);
         getCommentAdminInfo(commentid, user);
         commentRepository.deleteById(commentid);
+        return new MessageResponse(StatusEnum.OK);
+    }
+
+    @Transactional
+    public Object commentLike(Long commentid, UserDetailsImpl userDetails) {
+
+        Comment comment = commentRepository.findById(commentid).orElseThrow(
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_COMMENT_ALL)
+        );
+
+        Optional<CommentLike> getLike = commentLikeRepository.findByCommentIdAndUserId(commentid, userDetails.getUser().getId());
+
+        CommentLike commentLike;
+        if (getLike.isEmpty()) {
+            commentLike = commentLikeRepository.save(new CommentLike(userDetails.getUser(), comment));
+        } else {
+            Optional<CommentLike> likeSave = commentLikeRepository.deleteByCommentIdAndUserId(commentid, userDetails.getUser().getId());
+        }
+
         return new MessageResponse(StatusEnum.OK);
     }
 }

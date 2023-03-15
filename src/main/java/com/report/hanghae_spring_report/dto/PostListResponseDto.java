@@ -26,6 +26,7 @@ public class PostListResponseDto {
     private String username;
     private String title;
     private String contents;
+    private int likecount;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<CommentResponseDto> commentList = new ArrayList<>();
@@ -35,6 +36,7 @@ public class PostListResponseDto {
         this.username = post.getUser().getUsername();
         this.title = post.getTitle();
         this.contents = post.getContents();
+        this.likecount = post.getPostLikeList().size();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         for (Comment comment : post.getCommentList()) {

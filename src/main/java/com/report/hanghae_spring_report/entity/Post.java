@@ -47,6 +47,9 @@ public class Post extends Timestamped {
     @OrderBy(value = "createdAt DESC")
     List<Comment> commentList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    List<PostLike> postLikeList = new ArrayList<>();
+
     public Post(PostRequestDto postRequestDto, User user) {
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();

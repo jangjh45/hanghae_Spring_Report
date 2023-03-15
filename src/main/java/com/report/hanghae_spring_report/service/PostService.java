@@ -4,10 +4,12 @@ import com.report.hanghae_spring_report.common.ApiException;
 import com.report.hanghae_spring_report.common.ExceptionEnum;
 import com.report.hanghae_spring_report.dto.*;
 import com.report.hanghae_spring_report.entity.Post;
+import com.report.hanghae_spring_report.entity.PostLike;
 import com.report.hanghae_spring_report.entity.User;
 import com.report.hanghae_spring_report.entity.UserRoleEnum;
-import com.report.hanghae_spring_report.jwt.JwtUtil;
+import com.report.hanghae_spring_report.repository.PostLikeRepository;
 import com.report.hanghae_spring_report.repository.PostRepository;
+import com.report.hanghae_spring_report.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -22,7 +25,7 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final JwtUtil jwtUtil;
+    private final PostLikeRepository postLikeRepository;
 
     // 관리자 계정만 모든 게시글 수정, 삭제 가능
     public Post getPostAdminInfo(Long id, User user) {
@@ -92,6 +95,27 @@ public class PostService {
 
         getPostAdminInfo(id, user);
         postRepository.deleteById(id);
+        return new MessageResponse(StatusEnum.OK);
+    }
+
+    @Transactional
+    public Object postLike(Long postid, UserDetailsImpl userDetails) {
+
+        // 좋아요를 할 게시물이 있는지 확인 없으면 예외처리
+        Post post = postRepository.findById(postid).orElseThrow(
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ALL)
+        );
+
+        // 좋아요 테이블에 사용자가 게시물을 좋아요한 내역이 있는지 확인
+        Optional<PostLike> getLike = postLikeRepository.findByPostIdAndUserId(postid, userDetails.getUser().getId());
+
+        PostLike postLike;
+        if (getLike.isEmpty()) {
+            postLike = postLikeRepository.save(new PostLike(userDetails.getUser(), post));
+        } else {
+            Optional<PostLike> likeSave = postLikeRepository.deleteByPostIdAndUserId(postid, userDetails.getUser().getId());
+        }
+
         return new MessageResponse(StatusEnum.OK);
     }
 

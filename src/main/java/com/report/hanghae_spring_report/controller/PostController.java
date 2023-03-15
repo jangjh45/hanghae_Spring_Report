@@ -62,7 +62,7 @@ public class PostController {
     }
 
     // 게시글 좋아요
-    @PostMapping("/post/{postid}")
+    @PostMapping("/like/{postid}")
     public ResponseEntity GoodPost(
             @PathVariable Long postid,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {

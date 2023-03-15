@@ -48,7 +48,7 @@ public class CommentController {
         return ResponseEntity.ok().body(commentService.deleteComment(postid, commentid, userDetails.getUser()));
     }
 
-    @PostMapping("/comment/{commentid}") // 댓글 좋아요
+    @PostMapping("/like/{commentid}") // 댓글 좋아요
     public ResponseEntity GoodComment(
             @PathVariable Long commentid,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {

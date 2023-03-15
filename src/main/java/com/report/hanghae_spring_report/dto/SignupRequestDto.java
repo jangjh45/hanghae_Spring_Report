@@ -1,13 +1,11 @@
 package com.report.hanghae_spring_report.dto;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Getter
-@Setter
 public class SignupRequestDto {
 
     @NotNull(message = "username은 필수 입니다.")

@@ -1,11 +1,7 @@
 package com.report.hanghae_spring_report.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@Getter
-@AllArgsConstructor
 public enum ExceptionEnum {
     INVAILD_TOKEN(HttpStatus.BAD_REQUEST, "토큰이 유효하지 않습니다."),
     NOT_TOKEN(HttpStatus.BAD_REQUEST, "로그인 해주세요.(토큰없음)"),
@@ -23,4 +19,17 @@ public enum ExceptionEnum {
 
     private HttpStatus status;
     private String message;
+
+    public HttpStatus getStatus() {
+        return this.status;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
+
+    ExceptionEnum(HttpStatus status, String message) {
+        this.status = status;
+        this.message = message;
+    }
 }
